@@ -1,0 +1,14 @@
+body {
+    background: #000000;
+}
+
+#container {
+    max-width: 1400px;
+    margin: auto;
+}
+
+#game-screen {
+    background-image: url("../bin/gif/BackgroundGif60.gif");
+    background-repeat: repeat;
+    border: 1px solid #ffffff;
+}
