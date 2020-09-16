@@ -1,15 +1,3 @@
-// Collecting the canvas and his context
-let canvas  = document.getElementById("game-screen");
-let context = canvas.getContext('2d');
-let keys    = [];
-let bullets = [];
-let debug   = false;
-
-// Game constants
-const GAME_WIDTH     = 800;
-const GAME_HEIGHT    = 600;
-const KEY_SCORE_SAVE = "localHighScore";
-
 /////////////////////////////////////////////// MANAGER ////////////////////////////////////////////////////////////////
 
 class GameManager {
@@ -661,6 +649,18 @@ class CollisionSystem {
 
 
 /////////////////////////////////////////////// Sessão Main ////////////////////////////////////////////////////////////
+
+// Collecting the canvas and his context
+let canvas  = document.getElementById("game-screen");
+let context = canvas.getContext('2d');
+let keys    = [];
+let bullets = [];
+let debug   = false;
+
+// Game constants
+const GAME_WIDTH     = 800;
+const GAME_HEIGHT    = 600;
+const KEY_SCORE_SAVE = "localHighScore";
 
 // Setting up Bullet sound effects
 let bulletFx = new SoundFXManager();
