@@ -22,9 +22,9 @@ class GameManager {
         this.asteroidsQuantity = 0;
         this.level = 1;
         this.gameLives = 3;
-        this.scoreStr = localStorage.getItem(saveKey);
         this.ship = undefined;
         this.asteroidsBelt = [];
+        this.scoreStr = localStorage.getItem(saveKey);
 
         // Persisting the Highest Score
         if(this.scoreStr == null) {
@@ -292,7 +292,6 @@ class Ship {
 
 class Bullet {
     constructor(ship, angle, ctx) {
-        this.visible = true;
         this.context = ctx;
         this.x = ship.noseX;
         this.y = ship.noseY;
@@ -329,6 +328,9 @@ class Bullet {
 }
 
 class Rocks {
+
+    distanceFromShip = new CollisionSystem();
+
     static ROCK_VERTICES = 10;
     static ROCK_RADIUS = 100;
     static ROCK_SPEED = 0.6;
@@ -341,7 +343,6 @@ class Rocks {
     }
 
     constructor(canvas, canvasWidth, canvasHeight, ctx, ship, gameLevel, radius, x, y) {
-        this.visible = true;
         this.context = ctx;
         this.id = Rocks.idGenerator();
         this.canvas = canvas;
@@ -368,7 +369,7 @@ class Rocks {
             do {
                 this.x = Math.floor(Math.random() * canvasWidth);
                 this.y = Math.floor(Math.random() * canvasHeight);
-            } while(this.DistanceFromShip(this.ship.x, this.ship.y, this.x, this.y) < Rocks.ROCK_RADIUS * 2 + this.ship.radius);
+            } while(this.distanceFromShip.DistanceBetweenEntities(this.ship.x, this.ship.y, this.x, this.y) < Rocks.ROCK_RADIUS * 2 + this.ship.radius);
         } else {
             this.x = x;
             this.y = y;
@@ -378,10 +379,6 @@ class Rocks {
         for(let i = 0; i < this.vertices; i++) {
             this.offset.push(Math.random() * Rocks.ROCK_IRREGULAR * 2 + 1 - Rocks.ROCK_IRREGULAR);
         }
-    }
-
-    DistanceFromShip(shipX, shipY, rockX, rockY) {
-        return Math.sqrt(Math.pow(rockX - shipX, 2) + Math.pow(rockY - shipY, 2));
     }
 
     Debug() {
@@ -506,8 +503,7 @@ class GameHUD {
 
     static TEXT_TIME_FADE = 120;
 
-    constructor(canvas, context, sceneWidth, sceneHeight, ship) {
-        this.canvas = canvas;
+    constructor(context, sceneWidth, sceneHeight, ship) {
         this.context = context;
         this.sceneWidth = sceneWidth;
         this.sceneHeight = sceneHeight;
@@ -664,7 +660,7 @@ class CollisionSystem {
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 
-/////////////////////////////////////////////// PRINCIPAL //////////////////////////////////////////////////////////////
+/////////////////////////////////////////////// Sessão Main ////////////////////////////////////////////////////////////
 
 // Setting up Bullet sound effects
 let bulletFx = new SoundFXManager();
@@ -675,13 +671,13 @@ let gameHandler = new GameManager(canvas, GAME_WIDTH, GAME_HEIGHT, context, debu
 let game = gameHandler.newGame();
 
 // Getting the spaceship, the asteroids belt and the game level
-let ship      = game.ship;
-let rocks     = game.asteroidsBelt;
+let ship = game.ship;
+let rocks = game.asteroidsBelt;
 let gameLevel = game.gameLevel;
 let shipLives = game.shipLives;
 
 // Setting up the HUD
-let gameHUD = new GameHUD(canvas, context, GAME_WIDTH, GAME_HEIGHT, ship);
+let gameHUD = new GameHUD(context, GAME_WIDTH, GAME_HEIGHT, ship);
 
 // Instantiating the Collision System Detection
 let collision = new CollisionSystem(canvas, GAME_WIDTH, GAME_HEIGHT, context);
@@ -693,13 +689,6 @@ document.body.addEventListener('keydown', event => {
     if (event.keyCode === 186/*ç*/) {
         debug = !debug;
     }
-
-    // if (event.keyCode === 80/**/) {
-    //     gameHUD.radians += 0.1;
-    //     console.log(gameHUD.radians);
-    //     console.log("Angle calculado: ", Math.ceil(gameHUD.radians * (Math.PI * 180)));
-    //     console.log("Radians calculado: ", gameHUD.radians * (Math.PI * 180) / Math.PI * 180);
-    // }
 });
 document.body.addEventListener('keyup', event => {
     delete keys[event.keyCode];
@@ -767,8 +756,8 @@ function gameLoop() {
 
             // New level when the last asteroid is destroyed
             if (rocks.length === 0) {
-                //gameLevel++;
-                gameHandler.newLevel(++gameLevel);
+                gameLevel++;
+                gameHandler.newLevel(gameLevel);
                 gameHUD.textAlpha = 1;
             }
 
@@ -806,14 +795,13 @@ function gameLoop() {
 
                     if (distance < sumOfRadius) {
                         ship.Explosion();
-                        // shipExplodeFx.play();
                     }
                 }
             } else {
-                // ship.explosionTime--;
+                ship.explosionTime--;
 
-                if (--ship.explosionTime === 0) {
-                    // shipLives--;
+                if (ship.explosionTime === 0) {
+                    shipLives--;
                     gameHUD.textAlpha = 1;
 
                     if (--shipLives === 0) {
