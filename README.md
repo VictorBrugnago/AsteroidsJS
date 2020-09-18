@@ -14,3 +14,7 @@ Para a movimentação da nave, segue os seguintes comandos:
   - D - Gira a nave para a direita
   - Espaço - Dispara um projétil
   - Ç - Habilita/Desabilita o modo de DEBUG
+
+## Nota
+
+Certifique-se de desabilitar a opção "Bloquear Cookies de Terceiros" e permita que os sites salvem e leiam os dados de arquivos "cookies" - que armazenam temporariamente o que você visitou na rede, para que possa ser possível salvar a maior pontuação já registrada no game.
