@@ -13,7 +13,7 @@ Para a movimentação da nave, segue os seguintes comandos:
   - A - Gira a nave para a esquerda
   - D - Gira a nave para a direita
   - Espaço - Dispara um projétil
-  - Ç - Habilita/Desabilita o modo de DEBUG
+  - L - Habilita/Desabilita o modo de DEBUG
 
 ## Nota
 
