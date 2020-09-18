@@ -686,7 +686,7 @@ let collision = new CollisionSystem(canvas, GAME_WIDTH, GAME_HEIGHT, context);
 document.body.addEventListener('keydown', event => {
     keys[event.keyCode] = true;
 
-    if (event.keyCode === 186/*ç*/) {
+    if (event.keyCode === 76 /*l*/) {
         debug = !debug;
     }
 });
