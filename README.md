@@ -1,4 +1,4 @@
-# AsteroidJS
+# AsteroidsJS
 Um jogo minimalista, em JavaScript e sem a utilização de frameworks externas.
 
 # Como Executar
