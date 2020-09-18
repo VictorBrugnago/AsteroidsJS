@@ -29,7 +29,7 @@ class GameManager {
 
     newGame() {
         this.ship = this.newShip();
-        this.ship.Draw();
+        this.ship.draw();
         this.newLevel(this.level);
         return {
             ship: this.ship,
@@ -116,11 +116,11 @@ class Ship {
 
     }
 
-    Rotate(direction) {
+    rotate(direction) {
         this.angle += this.rotateSpeed * direction;
     }
 
-    Debug() {
+    debug() {
         // Configuring Font
         this.context.font = "8pt Roboto";
         this.context.textAlign = "center";
@@ -156,7 +156,7 @@ class Ship {
         this.context.fillText("posY (ShipCenter): " + Math.ceil(this.y), this.noseX + 5, this.noseY - 60)
     }
 
-    Explosion() {
+    explosion() {
         this.crash = this.explosionTime > 0;
 
         // draw the explosion (concentric circles of different colours)
@@ -205,7 +205,7 @@ class Ship {
         this.shipExplodeFx.play();
     }
 
-    Update() {
+    update() {
         let radians = this.angle / Math.PI * 180;
 
         // oldX + cos(radians) * distance
@@ -244,13 +244,13 @@ class Ship {
 
     }
 
-    Draw(debug) {
+    draw(debug) {
         let rightSideAngle = ((3 * Math.PI) / 4);
         let leftSideAngle = ((5 * Math.PI) / 4);
         let radians = this.angle / Math.PI * 180;
 
         if(debug) {
-            this.Debug();
+            this.debug();
         }
 
         this.context.strokeStyle = this.strokeColor;
@@ -290,7 +290,7 @@ class Bullet {
         this.speed = 5;
     }
 
-    Debug() {
+    debug() {
         this.context.strokeStyle = "yellow";
         this.context.beginPath();
         this.context.arc(this.x + (this.width/2), this.y + (this.width/2), this.radius, 0, Math.PI * 2, false);
@@ -298,15 +298,15 @@ class Bullet {
         this.context.stroke();
     }
 
-    Update() {
+    update() {
         let radians = this.angle / Math.PI * 180;
         this.x -= Math.cos(radians) * this.speed;
         this.y -= Math.sin(radians) * this.speed;
     }
 
-    Draw(debug) {
+    draw(debug) {
         if(debug) {
-            this.Debug();
+            this.debug();
         }
 
         this.context.fillStyle = 'white';
@@ -357,7 +357,7 @@ class Rocks {
             do {
                 this.x = Math.floor(Math.random() * canvasWidth);
                 this.y = Math.floor(Math.random() * canvasHeight);
-            } while(this.distanceFromShip.DistanceBetweenEntities(this.ship.x, this.ship.y, this.x, this.y) < Rocks.ROCK_RADIUS * 2 + this.ship.radius);
+            } while(this.distanceFromShip.distanceBetweenEntities(this.ship.x, this.ship.y, this.x, this.y) < Rocks.ROCK_RADIUS * 2 + this.ship.radius);
         } else {
             this.x = x;
             this.y = y;
@@ -369,7 +369,7 @@ class Rocks {
         }
     }
 
-    Debug() {
+    debug() {
         // Configuring Font
         this.context.font = "8pt Roboto";
         this.context.textAlign = "center";
@@ -394,7 +394,7 @@ class Rocks {
         this.context.fillText("posY (centro): " + Math.ceil(this.y), this.x, this.y + 25);
     }
 
-    Explosion() {
+    explosion() {
         this.crash = true;
 
         // draw the explosion (concentric circles of different colours)
@@ -439,7 +439,7 @@ class Rocks {
         this.context.stroke();
     }
 
-    Update() {
+    update() {
         let radians = this.angle / Math.PI * 180;
         this.x += this.offset[0] * Math.cos(radians) * this.speed;
         this.y += this.offset[0] * Math.sin(radians) * this.speed;
@@ -460,9 +460,9 @@ class Rocks {
         }
     }
 
-    Draw(debug) {
+    draw(debug) {
         if(debug) {
-            this.Debug();
+            this.debug();
         }
 
         this.context.beginPath();
@@ -587,14 +587,14 @@ class CollisionSystem {
 
     }
 
-    DistanceBetweenEntities(EntityOneX, EntityOneY, EntityTwoX, EntityTwoY) {
+    distanceBetweenEntities(EntityOneX, EntityOneY, EntityTwoX, EntityTwoY) {
         return Math.sqrt(Math.pow(EntityTwoX - EntityOneX, 2) + Math.pow(EntityTwoY - EntityOneY, 2));
     }
 
-    BulletCollisionRocks(rocks, bullets, gameLevel, ship) {
+    bulletCollisionRocks(rocks, bullets, gameLevel, ship) {
         for(let i = 0; i < rocks.length; i++) {
             for (let j = 0; j < bullets.length; j++) {
-                if (this.DistanceBetweenEntities(rocks[i].x, rocks[i].y, bullets[j].x, bullets[j].y) < rocks[i].radius + bullets[j].radius) {
+                if (this.distanceBetweenEntities(rocks[i].x, rocks[i].y, bullets[j].x, bullets[j].y) < rocks[i].radius + bullets[j].radius) {
                     if (rocks[i].radius === Math.ceil(Rocks.ROCK_RADIUS / 2)) {
 
                         rocks.push(new Rocks(this.canvas, this.game_width, this.game_height, this.context, this.ship, gameLevel, Math.ceil(Rocks.ROCK_RADIUS / 4),
@@ -612,7 +612,7 @@ class CollisionSystem {
                     }
 
                     bullets.splice(j, 1);
-                    rocks[i].Explosion();
+                    rocks[i].explosion();
                     ship.score += rocks[i].pointsValue;
                     rocks.splice(i, 1);
                     this.hitFx.play();
@@ -622,7 +622,7 @@ class CollisionSystem {
         }
     }
 
-    BulletOffScreen(bullets) {
+    bulletOffScreen(bullets) {
         // Deleting the bullet when off screen
         for(let i = 0; i < bullets.length; i++) {
             if(bullets[i].x < bullets[i].radius) {
@@ -726,17 +726,17 @@ function gameLoop() {
             ship.movingForward = keys[87];
 
             if (keys[68]) {
-                ship.Rotate(1);
+                ship.rotate(1);
             }
 
             if (keys[65]) {
-                ship.Rotate(-1);
+                ship.rotate(-1);
             }
 
             // Updating the Ship and drawing
             if (ship.blinkOn) {
-                ship.Update();
-                ship.Draw(debug);
+                ship.update();
+                ship.draw(debug);
             }
 
             // Handle ship blinking
@@ -764,37 +764,37 @@ function gameLoop() {
             // Bullet Gun
             if (bullets.length !== 0) {
                 // Collision Detection
-                collision.BulletCollisionRocks(rocks, bullets, gameLevel, ship);
-                collision.BulletOffScreen(bullets);
+                collision.bulletCollisionRocks(rocks, bullets, gameLevel, ship);
+                collision.bulletOffScreen(bullets);
 
                 for (let i = 0; i < bullets.length; i++) {
-                    bullets[i].Update();
-                    bullets[i].Draw(debug);
+                    bullets[i].update();
+                    bullets[i].draw(debug);
                 }
             }
         } else {
             gameHUD.gameOverIndicador();
         }
     } else {
-        ship.Explosion();
+        ship.explosion();
     }
 
     // Rocks behavior
     if(rocks.length !== 0) {
         for(let j = 0; j < rocks.length; j++) {
-            rocks[j].Update();
-            rocks[j].Draw(debug);
+            rocks[j].update();
+            rocks[j].draw(debug);
 
             // Collision Detection
             if(!ship.crash && ship.alive) {
                 if(ship.blinkNum === -1) {
-                    const distance = collision.DistanceBetweenEntities(
+                    const distance = collision.distanceBetweenEntities(
                         ship.x, ship.y, rocks[j].x, rocks[j].y);
 
                     const sumOfRadius = ship.radius + rocks[j].radius;
 
                     if (distance < sumOfRadius) {
-                        ship.Explosion();
+                        ship.explosion();
                     }
                 }
             } else {
